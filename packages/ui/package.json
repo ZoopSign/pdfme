@@ -47,7 +47,8 @@
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-moveable": "^0.30.3",
-    "react-selecto": "^1.12.0"
+    "react-selecto": "^1.12.0",
+    "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
     "@pdfme/common": "file:../common",
