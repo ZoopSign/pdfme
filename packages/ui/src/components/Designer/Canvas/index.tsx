@@ -13,7 +13,7 @@ import { theme, Button } from 'antd';
 import { OnDrag, OnResize, OnClick, OnRotate } from 'react-moveable';
 import { ZOOM, SchemaForUI, Size, ChangeSchemas, BasePdf, isBlankPdf } from '@pdfme/common';
 import { PluginsRegistry } from '../../../contexts';
-import { CloseOutlined } from '@ant-design/icons';
+import { CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import { RULER_HEIGHT, RIGHT_SIDEBAR_WIDTH } from '../../../constants';
 import { usePrevious } from '../../../hooks';
 import { uuid, round, flatten } from '../../../helper';
@@ -21,13 +21,9 @@ import Paper from '../../Paper';
 import Renderer from '../../Renderer';
 import Selecto from './Selecto';
 import Moveable from './Moveable';
-import Guides from './Guides';
 import Mask from './Mask';
-import Padding from './Padding';
-
 
 const mm2px = (mm: number) => mm * 3.7795275591;
-
 
 const DELETE_BTN_ID = uuid();
 const fmt4Num = (prop: string) => Number(prop.replace('px', ''));
@@ -61,7 +57,37 @@ const DeleteButton = ({ activeElements: aes }: { activeElements: HTMLElement[] }
         background: token.colorPrimary,
       }}
     >
-      <CloseOutlined style={{ pointerEvents: 'none' }} />
+      <DeleteOutlined style={{ pointerEvents: 'none' }} />
+    </Button>
+  );
+};
+
+const LayersButton = ({ activeElements: aes }: { activeElements: HTMLElement[] }) => {
+  const { token } = theme.useToken();
+
+  const size = 26;
+  const top = Math.max(...aes.map(({ style }) => fmt4Num(style.top) + 30));
+  const left = Math.max(...aes.map(({ style }) => fmt4Num(style.left) + fmt4Num(style.width))) + 10;
+
+  return (
+    <Button
+      style={{
+        position: 'absolute',
+        zIndex: 1,
+        top,
+        left,
+        width: size,
+        height: size,
+        padding: 2,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: token.borderRadius,
+        color: token.colorWhite,
+        background: token.colorPrimary,
+      }}
+    >
+      <CopyOutlined style={{ pointerEvents: 'none' }} />
     </Button>
   );
 };
@@ -340,6 +366,7 @@ const Canvas = (props: Props, ref: Ref<HTMLDivElement>) => {
         overflow: 'auto',
         marginRight: sidebarOpen ? RIGHT_SIDEBAR_WIDTH : 0,
         ...size,
+        background: '#fafafa',
       }}
       ref={ref}
     >
@@ -393,8 +420,12 @@ const Canvas = (props: Props, ref: Ref<HTMLDivElement>) => {
             {!editing && activeElements.length > 0 && pageCursor === index && (
               <DeleteButton activeElements={activeElements} />
             )}
-            <Padding basePdf={basePdf} />
-            <Guides
+            {!editing && activeElements.length > 0 && pageCursor === index && (
+              <LayersButton activeElements={activeElements} />
+            )}
+
+            {/* <Padding basePdf={basePdf} /> */}
+            {/* <Guides
               paperSize={paperSize}
               horizontalRef={(e) => {
                 if (e) horizontalGuides.current[index] = e;
@@ -402,7 +433,7 @@ const Canvas = (props: Props, ref: Ref<HTMLDivElement>) => {
               verticalRef={(e) => {
                 if (e) verticalGuides.current[index] = e;
               }}
-            />
+            /> */}
             {pageCursor !== index ? (
               <Mask
                 width={paperSize.width + RULER_HEIGHT}
@@ -445,13 +476,14 @@ const Canvas = (props: Props, ref: Ref<HTMLDivElement>) => {
                 ? 'designer'
                 : 'viewer'
             }
-            onChange={(arg) => {
+            onChange={(arg: unknown) => {
               const args = Array.isArray(arg) ? arg : [arg];
               changeSchemas(args.map(({ key, value }) => ({ key, value, schemaId: schema.id })));
             }}
             stopEditing={() => setEditing(false)}
-            outline={`1px ${hoveringSchemaId === schema.id ? 'solid' : 'dashed'} ${schema.readOnly && hoveringSchemaId !== schema.id ? 'transparent' : token.colorPrimary
-              }`}
+            outline={`1px ${hoveringSchemaId === schema.id ? 'solid' : 'dashed'} ${
+              schema.readOnly && hoveringSchemaId !== schema.id ? 'transparent' : token.colorPrimary
+            }`}
             scale={scale}
           />
         )}

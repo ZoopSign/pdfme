@@ -12,7 +12,6 @@ import {
 } from '@pdfme/common';
 import { DndContext } from '@dnd-kit/core';
 import RightSidebar from './RightSidebar/index';
-import LeftSidebar from './LeftSidebar';
 import Canvas from './Canvas/index';
 import { RULER_HEIGHT, RIGHT_SIDEBAR_WIDTH } from '../../constants';
 import { I18nContext, PluginsRegistry } from '../../contexts';
@@ -28,6 +27,9 @@ import { useUIPreProcessor, useScrollPageCursor, useInitEvents } from '../../hoo
 import Root from '../Root';
 import ErrorScreen from '../ErrorScreen';
 import CtlBar from '../CtlBar';
+import Header from './RightSidebar/Header';
+
+
 
 /**
  * When the canvas scales there is a displacement of the starting position of the dragged schema.
@@ -38,7 +40,7 @@ const scaleDragPosAdjustment = (adjustment: number, scale: number): number => {
   if (scale > 1) return adjustment * (scale - 1);
   if (scale < 1) return adjustment * -(1 - scale);
   return 0;
-}
+};
 
 const TemplateEditor = ({
   template,
@@ -51,8 +53,8 @@ const TemplateEditor = ({
   onSaveTemplate: (t: Template) => void;
   onChangeTemplate: (t: Template) => void;
 } & {
-  onChangeTemplate: (t: Template) => void 
-  onPageCursorChange: (newPageCursor: number) => void
+  onChangeTemplate: (t: Template) => void;
+  onPageCursorChange: (newPageCursor: number) => void;
 }) => {
   const past = useRef<SchemaForUI[][]>([]);
   const future = useRef<SchemaForUI[][]>([]);
@@ -70,8 +72,11 @@ const TemplateEditor = ({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [prevTemplate, setPrevTemplate] = useState<Template | null>(null);
 
-  const { backgrounds, pageSizes, scale, error, refresh } =
-    useUIPreProcessor({ template, size, zoomLevel });
+  const { backgrounds, pageSizes, scale, error, refresh } = useUIPreProcessor({
+    template,
+    size,
+    zoomLevel,
+  });
 
   const onEdit = (targets: HTMLElement[]) => {
     setActiveElements(targets);
@@ -90,7 +95,7 @@ const TemplateEditor = ({
     pageCursor,
     onChangePageCursor: (p) => {
       setPageCursor(p);
-      onPageCursorChange(p)
+      onPageCursorChange(p);
       onEditEnd();
     },
   });
@@ -157,18 +162,29 @@ const TemplateEditor = ({
   }, []);
 
   const addSchema = (defaultSchema: Schema) => {
-    const [paddingTop, paddingRight, paddingBottom, paddingLeft] = isBlankPdf(template.basePdf) ? template.basePdf.padding : [0, 0, 0, 0];
+    const [paddingTop, paddingRight, paddingBottom, paddingLeft] = isBlankPdf(template.basePdf)
+      ? template.basePdf.padding
+      : [0, 0, 0, 0];
     const pageSize = pageSizes[pageCursor];
 
-    const ensureMiddleValue = (min: number, value: number, max: number) => Math.min(Math.max(min, value), max)
+    const ensureMiddleValue = (min: number, value: number, max: number) =>
+      Math.min(Math.max(min, value), max);
 
     const s = {
       id: uuid(),
       key: `${i18n('field')}${schemasList[pageCursor].length + 1}`,
       ...defaultSchema,
       position: {
-        x: ensureMiddleValue(paddingLeft, defaultSchema.position.x, pageSize.width - paddingRight - defaultSchema.width),
-        y: ensureMiddleValue(paddingTop, defaultSchema.position.y, pageSize.height - paddingBottom - defaultSchema.height),
+        x: ensureMiddleValue(
+          paddingLeft,
+          defaultSchema.position.x,
+          pageSize.width - paddingRight - defaultSchema.width
+        ),
+        y: ensureMiddleValue(
+          paddingTop,
+          defaultSchema.position.y,
+          pageSize.height - paddingBottom - defaultSchema.height
+        ),
       },
     } as SchemaForUI;
 
@@ -199,7 +215,8 @@ const TemplateEditor = ({
     setTimeout(
       () =>
         canvasRef.current &&
-        ((canvasRef.current.scrollTop = getPagesScrollTopByIndex(pageSizes, newPageCursor, scale)), 0)
+        ((canvasRef.current.scrollTop = getPagesScrollTopByIndex(pageSizes, newPageCursor, scale)),
+        0)
     );
   };
 
@@ -236,90 +253,97 @@ const TemplateEditor = ({
     : {};
 
   return (
-    <Root size={size} scale={scale}>
-      <DndContext
-        onDragEnd={(event) => {
-          // Triggered after a schema is dragged & dropped from the left sidebar.
-          if (!event.active) return;
-          const active = event.active;
-          const pageRect = paperRefs.current[pageCursor].getBoundingClientRect();
+    <main>
+      <Header />
+      <Root size={size} scale={scale}>
+        <DndContext
+          onDragEnd={(event) => {
+            // Triggered after a schema is dragged & dropped from the left sidebar.
+            if (!event.active) return;
+            const active = event.active;
+            const pageRect = paperRefs.current[pageCursor].getBoundingClientRect();
 
-          const dragStartLeft = active.rect.current.initial?.left || 0;
-          const dragStartTop = active.rect.current.initial?.top || 0;
+            const dragStartLeft = active.rect.current.initial?.left || 0;
+            const dragStartTop = active.rect.current.initial?.top || 0;
 
-          const canvasLeftOffsetFromPageCorner = pageRect.left - dragStartLeft + scaleDragPosAdjustment(20, scale);
-          const canvasTopOffsetFromPageCorner = pageRect.top - dragStartTop;
+            const canvasLeftOffsetFromPageCorner =
+              pageRect.left - dragStartLeft + scaleDragPosAdjustment(20, scale);
+            const canvasTopOffsetFromPageCorner = pageRect.top - dragStartTop;
 
-          const moveY = (event.delta.y - canvasTopOffsetFromPageCorner) / scale;
-          const moveX = (event.delta.x - canvasLeftOffsetFromPageCorner) / scale;
+            const moveY = (event.delta.y - canvasTopOffsetFromPageCorner) / scale;
+            const moveX = (event.delta.x - canvasLeftOffsetFromPageCorner) / scale;
 
-          const position = { x: px2mm(Math.max(0, moveX)), y: px2mm(Math.max(0, moveY)) }
+            const position = { x: px2mm(Math.max(0, moveX)), y: px2mm(Math.max(0, moveY)) };
 
-          addSchema({ ...(active.data.current as Schema), position });
-        }}
-        onDragStart={onEditEnd}
-      >
-        <CtlBar
-          size={sizeExcSidebar}
-          pageCursor={pageCursor}
-          pageNum={schemasList.length}
-          setPageCursor={(p) => {
-            if (!canvasRef.current) return;
-            canvasRef.current.scrollTop = getPagesScrollTopByIndex(pageSizes, p, scale);
-            setPageCursor(p);
-            onEditEnd();
+            addSchema({ ...(active.data.current as Schema), position });
           }}
-          zoomLevel={zoomLevel}
-          setZoomLevel={setZoomLevel}
-          {...pageManipulation}
-        />
-        <LeftSidebar
-          height={canvasRef.current ? canvasRef.current.clientHeight : 0}
-          scale={scale}
-          basePdf={template.basePdf}
-        />
+          onDragStart={onEditEnd}
+        >
+          <CtlBar
+            size={sizeExcSidebar}
+            pageCursor={pageCursor}
+            pageNum={schemasList.length}
+            setPageCursor={(p) => {
+              if (!canvasRef.current) return;
+              canvasRef.current.scrollTop = getPagesScrollTopByIndex(pageSizes, p, scale);
+              setPageCursor(p);
+              onEditEnd();
+            }}
+            zoomLevel={zoomLevel}
+            setZoomLevel={setZoomLevel}
+            {...pageManipulation}
+          />
 
-        <RightSidebar
-          hoveringSchemaId={hoveringSchemaId}
-          onChangeHoveringSchemaId={onChangeHoveringSchemaId}
-          height={canvasRef.current ? canvasRef.current.clientHeight : 0}
-          size={size}
-          pageSize={pageSizes[pageCursor] ?? []}
-          activeElements={activeElements}
-          schemas={schemasList[pageCursor] ?? []}
-          changeSchemas={changeSchemas}
-          onSortEnd={onSortEnd}
-          onEdit={id => {
-            const editingElem = document.getElementById(id);
-            editingElem && onEdit([editingElem]);
-          }}
-          onEditEnd={onEditEnd}
-          deselectSchema={onEditEnd}
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
+          <Canvas
+            ref={canvasRef}
+            paperRefs={paperRefs}
+            basePdf={template.basePdf}
+            hoveringSchemaId={hoveringSchemaId}
+            onChangeHoveringSchemaId={onChangeHoveringSchemaId}
+            height={size.height - RULER_HEIGHT * ZOOM}
+            pageCursor={pageCursor}
+            scale={scale}
+            size={sizeExcSidebar}
+            pageSizes={pageSizes}
+            backgrounds={backgrounds}
+            activeElements={activeElements}
+            schemasList={schemasList}
+            changeSchemas={changeSchemas}
+            removeSchemas={removeSchemas}
+            sidebarOpen={sidebarOpen}
+            onEdit={onEdit}
+          />
 
-        <Canvas
-          ref={canvasRef}
-          paperRefs={paperRefs}
-          basePdf={template.basePdf}
-          hoveringSchemaId={hoveringSchemaId}
-          onChangeHoveringSchemaId={onChangeHoveringSchemaId}
-          height={size.height - RULER_HEIGHT * ZOOM}
-          pageCursor={pageCursor}
-          scale={scale}
-          size={sizeExcSidebar}
-          pageSizes={pageSizes}
-          backgrounds={backgrounds}
-          activeElements={activeElements}
-          schemasList={schemasList}
-          changeSchemas={changeSchemas}
-          removeSchemas={removeSchemas}
-          sidebarOpen={sidebarOpen}
-          onEdit={onEdit}
-        />
-      </DndContext>
-    </Root>
+          {sidebarOpen ? (
+            <RightSidebar
+              hoveringSchemaId={hoveringSchemaId}
+              onChangeHoveringSchemaId={onChangeHoveringSchemaId}
+              height={canvasRef.current ? canvasRef.current.clientHeight : 0}
+              size={size}
+              pageSize={pageSizes[pageCursor] ?? []}
+              activeElements={activeElements}
+              schemas={schemasList[pageCursor] ?? []}
+              changeSchemas={changeSchemas}
+              onSortEnd={onSortEnd}
+              onEdit={(id) => {
+                const editingElem = document.getElementById(id);
+                editingElem && onEdit([editingElem]);
+              }}
+              onEditEnd={onEditEnd}
+              deselectSchema={onEditEnd}
+              sidebarOpen={sidebarOpen}
+              setSidebarOpen={setSidebarOpen}
+              basePdf={template.basePdf}
+              scale={scale}
+            />
+          ) : (
+            <div className="relative">
+              <button className="absolute bg-red-400">Open Sidebar</button>
+            </div>
+          )}
+        </DndContext>
+      </Root>
+    </main>
   );
 };
 

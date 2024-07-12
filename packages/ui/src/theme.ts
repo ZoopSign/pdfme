@@ -2,7 +2,7 @@ import type { ThemeConfig } from 'antd';
 
 export const defaultTheme: ThemeConfig = {
   token: {
-    colorPrimary: '#38a0ff',
+    colorPrimary: '#6B52AD',
   },
   components: {
     Form: {

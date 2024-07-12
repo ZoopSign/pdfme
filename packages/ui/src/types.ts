@@ -1,4 +1,4 @@
-import type { SchemaForUI, Size, ChangeSchemas } from '@pdfme/common';
+import type { SchemaForUI, Size, ChangeSchemas, BasePdf } from '@pdfme/common';
 
 export type SidebarProps = {
   height: number;
@@ -15,4 +15,6 @@ export type SidebarProps = {
   deselectSchema: () => void;
   sidebarOpen: boolean;
   setSidebarOpen: (sidebarOpen: boolean) => void;
+  basePdf: BasePdf;
+  scale: number;
 };

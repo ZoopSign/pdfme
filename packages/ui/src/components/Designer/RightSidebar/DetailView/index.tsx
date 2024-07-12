@@ -2,10 +2,9 @@ import FormRender, { useForm } from 'form-render';
 import React, { useContext, useEffect, useState } from 'react';
 import type { Dict, SchemaForUI, PropPanelWidgetProps, PropPanelSchema } from '@pdfme/common';
 import type { SidebarProps } from '../../../../types';
-import { MenuOutlined } from '@ant-design/icons';
 import { I18nContext, PluginsRegistry, OptionsContext } from '../../../../contexts';
 import { getSidebarContentHeight } from '../../../../helper';
-import { theme, Typography, Button, Divider } from 'antd';
+import { theme, Typography, Divider } from 'antd';
 import AlignWidget from './AlignWidget';
 import WidgetRenderer from './WidgetRenderer';
 
@@ -184,29 +183,14 @@ Check this document: https://pdfme.com/docs/custom-schemas`);
   }
 
   return (
-    <div>
-      <div style={{ height: 40, display: 'flex', alignItems: 'center' }}>
-        <Button
-          style={{
-            position: 'absolute',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onClick={deselectSchema}
-          icon={<MenuOutlined />}
-        />
-        <Text strong style={{ textAlign: 'center', width: '100%' }}>
-          {i18n('editField')}
-        </Text>
-      </div>
-      <Divider style={{ marginTop: token.marginXS, marginBottom: token.marginXS }} />
+    <div style={{ width: 340 }}>
       <div
         style={{
           height: getSidebarContentHeight(size.height),
           overflowY: 'auto',
-          overflowX: 'hidden'
+          display: 'flex',
+          flexDirection: 'column',
+          overflowX: 'hidden',
         }}
       >
         <FormRender
