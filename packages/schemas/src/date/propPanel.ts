@@ -5,7 +5,7 @@ import {
   PropPanelSchema,
   getFallbackFontName,
 } from '@pdfme/common';
-import type { TextSchema } from './types';
+import type { DateSchema } from './types';
 import {
   DEFAULT_FONT_SIZE,
   DEFAULT_ALIGNMENT,
@@ -49,7 +49,7 @@ const UseDynamicFontSize = (props: PropPanelWidgetProps) => {
   rootElement.appendChild(label);
 };
 
-export const propPanel: PropPanel<TextSchema> = {
+export const propPanel: PropPanel<DateSchema> = {
   schema: ({ options, activeSchema, i18n }) => {
     const font = options.font || { [DEFAULT_FONT_NAME]: { data: '', fallback: true } };
     const fontNames = Object.keys(font);
@@ -66,14 +66,7 @@ export const propPanel: PropPanel<TextSchema> = {
         props: { options: fontNames.map((name) => ({ label: name, value: name })) },
         span: 12,
       },
-      content: {
-        title: i18n('schemas.text.content'),
-        type: 'string',
-        widget: 'input',
-        default: '',
-        span: 24,
-        max: 24,
-      },
+
       fontSize: {
         title: i18n('schemas.text.size'),
         type: 'number',

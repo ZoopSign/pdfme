@@ -41,9 +41,6 @@ const Paper = (props: {
         // We set them to the scale value to ensure the container is redrawn when you zoom in/out.
         height: scale,
         width: scale,
-        WebkitBoxShadow: '-1px 0px 9px 0px rgba(148,148,148,0.36)',
-        MozBoxShadow: '-1px 0px 9px 0px rgba(148,148,148,0.36)',
-        boxShadow: '-1px 0px 9px 0px rgba(148,148,148,0.36)',
       }}
     >
       {backgrounds.map((background, paperIndex) => {
@@ -94,7 +91,9 @@ const Paper = (props: {
               backgroundImage: `url(${background})`,
               backgroundSize: `${paperSize.width}px ${paperSize.height}px`,
               ...paperSize,
-              backgroundColor: 'red',
+              WebkitBoxShadow: '-1px 0px 9px 0px rgba(148,148,148,0.36)',
+              MozBoxShadow: '-1px 0px 9px 0px rgba(148,148,148,0.36)',
+              boxShadow: '-1px 0px 9px 0px rgba(148,148,148,0.36)',
             }}
           >
             {renderPaper && renderPaper({ paperSize, index: paperIndex })}

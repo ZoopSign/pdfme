@@ -8,6 +8,7 @@ export const Dict = z.object({
   cancel: z.string(),
   field: z.string(),
   fieldName: z.string(),
+  content: z.string(),
   align: z.string(),
   width: z.string(),
   opacity: z.string(),

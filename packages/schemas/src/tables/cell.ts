@@ -146,7 +146,7 @@ const cellSchema: Plugin<CellSchema> = {
     },
     defaultSchema: {
       type: 'cell',
-      content: 'Type Something...',
+      content: 'Type...',
       position: { x: 0, y: 0 },
       width: 50,
       height: 15,

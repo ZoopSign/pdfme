@@ -83,8 +83,8 @@ const Draggable = (props: {
 };
 
 const Sidebar = (props: SidebarProps) => {
-  const { sidebarOpen, setSidebarOpen, scale, basePdf, activeElements, schemas } = props;
-  const [activeTab, setActiveTab] = useState<number>(1);
+  const { sidebarOpen, scale, basePdf, activeElements, schemas, removeSchemas } = props;
+  const [activeTab, setActiveTab] = useState<number>(0);
   const pluginsRegistry = useContext(PluginsRegistry);
 
   const getActiveSchemas = () =>

@@ -4,6 +4,7 @@ import svg, { readOnlySvg } from './graphics/svg.js';
 import barcodes from './barcodes/index.js';
 import line from './shapes/line.js';
 import table from './tables/index.js';
+import date from './date/index.js';
 import { modifyTemplateForTable, getDynamicHeightForTable } from './tables/dynamicTemplate.js';
 import { rectangle, ellipse } from './shapes/rectAndEllipse.js';
 import { convertForPdfLayoutProps, rotatePoint } from './utils.js';
@@ -14,16 +15,17 @@ const builtInPlugins = { Text: text };
 
 export {
   text,
+  date,
   readOnlyText,
   image,
   readOnlyImage,
+  getDynamicHeightForTable,
   svg,
   readOnlySvg,
   barcodes,
   line,
   tableBeta,
   modifyTemplateForTable,
-  getDynamicHeightForTable,
   rectangle,
   ellipse,
   builtInPlugins,

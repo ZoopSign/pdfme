@@ -37,7 +37,7 @@ const SelectableSortableItem = ({
 
   const newListeners = {
     ...listeners,
-    onClick: (event: any) => onSelect(schema.id, event.shiftKey),
+    onClick: (event: React.MouseEvent) => onSelect(schema.id, event.shiftKey),
   };
 
   let status: undefined | 'is-warning' | 'is-danger';
