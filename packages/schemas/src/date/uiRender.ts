@@ -1,6 +1,6 @@
 import type * as CSS from 'csstype';
 import { UIRenderProps, Schema, getDefaultFont } from '@pdfme/common';
-import type { TextSchema } from './types';
+import type { DateSchema } from './types';
 import {
   DEFAULT_FONT_SIZE,
   DEFAULT_ALIGNMENT,
@@ -18,7 +18,7 @@ import {
   getFontKitFont,
   getBrowserVerticalFontAdjustments,
   isFirefox,
-} from './helper.js';
+} from './helper';
 import { isEditable } from '../utils.js';
 
 const mapVerticalAlignToFlex = (verticalAlignmentValue: string | undefined) => {
@@ -38,7 +38,7 @@ const getBackgroundColor = (value: string, schema: Schema) => {
   return schema.backgroundColor as string;
 };
 
-export const uiRender = async (arg: UIRenderProps<TextSchema>) => {
+export const uiRender = async (arg: UIRenderProps<DateSchema>) => {
   const {
     value,
     schema,
@@ -53,11 +53,9 @@ export const uiRender = async (arg: UIRenderProps<TextSchema>) => {
   } = arg;
   const font = options?.font || getDefaultFont();
 
-  console.log({ value, placeholder });
-  
   let dynamicFontSize: undefined | number = undefined;
   const getCdfArg = (v: string) => ({
-    textSchema: schema,
+    dateSchema: schema,
     font,
     value: v,
     startingFontSize: dynamicFontSize,
@@ -171,8 +169,6 @@ export const uiRender = async (arg: UIRenderProps<TextSchema>) => {
     }
 
     if (placeholder && !value) {
-      console.log({ placeholder, value });
-
       textBlock.innerText = placeholder;
       textBlock.style.color = PLACEHOLDER_FONT_COLOR;
       if (schema.dynamicFontSize) {

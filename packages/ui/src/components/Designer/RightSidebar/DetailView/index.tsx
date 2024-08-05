@@ -7,8 +7,10 @@ import { getSidebarContentHeight } from '../../../../helper';
 import { theme, Typography, Divider } from 'antd';
 import AlignWidget from './AlignWidget';
 import WidgetRenderer from './WidgetRenderer';
+import { Input } from 'antd';
 
 const { Text } = Typography;
+// const { Input } = Input;
 
 const DetailView = (
   props: Pick<
@@ -22,6 +24,7 @@ const DetailView = (
 
   const { size, changeSchemas, deselectSchema, activeSchema, activeElements } = props;
   const form = useForm();
+  const [contentValue, setContentValue] = useState(activeSchema.content);
 
   const i18n = useContext(I18nContext);
   const pluginsRegistry = useContext(PluginsRegistry);
@@ -59,8 +62,7 @@ const DetailView = (
   useEffect(() => {
     const values: any = { ...activeSchema };
 
-    // [position] Change the nested position object into a flat, as a three-column layout is difficult to implement
-    values.x = values.position.x;
+    // [position] Change the nested position object into a flat, as a three-column layout is difficult to implement    values.x = values.position.x;
     values.y = values.position.y;
     delete values.position;
 
@@ -77,10 +79,8 @@ const DetailView = (
       if (['id', 'content'].includes(key)) continue;
       if (newSchema[key] !== (activeSchema as any)[key]) {
         let value = newSchema[key];
-        // FIXME memo: https://github.com/pdfme/pdfme/pull/367#issuecomment-1857468274
         if (value === null && ['rotate', 'opacity'].includes(key)) value = undefined;
 
-        // [position] Return the flattened position to its original form.
         if (key === 'x') key = 'position.x';
         if (key === 'y') key = 'position.y';
         changes.push({ key, value, schemaId: activeSchema.id });
@@ -89,6 +89,8 @@ const DetailView = (
     if (changes.length) {
       changeSchemas(changes);
     }
+
+    setContentValue(newSchema.content);
   };
 
   const activePlugin = Object.values(pluginsRegistry).find(
@@ -111,15 +113,23 @@ Check this document: https://pdfme.com/docs/custom-schemas`);
     type: 'object',
     column: 2,
     properties: {
-      type: {
-        title: i18n('type'),
+      content: {
+        title: i18n('content'),
         type: 'string',
-        widget: 'select',
-        props: { options: typeOptions },
+        widget: 'input',
         required: true,
-        span: 10,
+        disabled: defaultSchema?.content === '',
+        span: 24,
       },
-      key: { title: i18n('fieldName'), type: 'string', required: true, span: 14 },
+      // type: {
+      //   title: i18n('type'),
+      //   type: 'string',
+      //   widget: 'select',
+      //   props: { options: typeOptions },
+      //   required: true,
+      //   span: 10,
+      // },
+      key: { title: i18n('fieldName'), type: 'string', required: true, span: 24 },
       '-': { type: 'void', widget: 'Divider' },
       align: { title: i18n('align'), type: 'void', widget: 'AlignWidget' },
       x: { title: 'X', type: 'number', widget: 'inputNumber', required: true, span: 8, min: 0 },
@@ -193,6 +203,7 @@ Check this document: https://pdfme.com/docs/custom-schemas`);
           overflowX: 'hidden',
         }}
       >
+        {/* <Input value={contentValue} onChange={(e) => setContentValue(e.target.value)} /> */}
         <FormRender
           form={form}
           schema={propPanelSchema}

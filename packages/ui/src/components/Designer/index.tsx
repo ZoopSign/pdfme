@@ -27,9 +27,7 @@ import { useUIPreProcessor, useScrollPageCursor, useInitEvents } from '../../hoo
 import Root from '../Root';
 import ErrorScreen from '../ErrorScreen';
 import CtlBar from '../CtlBar';
-import Header from './RightSidebar/Header';
-
-
+import Header from '../Header';
 
 /**
  * When the canvas scales there is a displacement of the starting position of the dragged schema.
@@ -71,6 +69,8 @@ const TemplateEditor = ({
   const [zoomLevel, setZoomLevel] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [prevTemplate, setPrevTemplate] = useState<Template | null>(null);
+
+  const [editing, setEditing] = useState(false);
 
   const { backgrounds, pageSizes, scale, error, refresh } = useUIPreProcessor({
     template,
@@ -254,7 +254,7 @@ const TemplateEditor = ({
 
   return (
     <main>
-      <Header />
+      <Header mode={editing} />
       <Root size={size} scale={scale}>
         <DndContext
           onDragEnd={(event) => {
@@ -312,35 +312,32 @@ const TemplateEditor = ({
             removeSchemas={removeSchemas}
             sidebarOpen={sidebarOpen}
             onEdit={onEdit}
+            setEditing={setEditing}
+            editing={editing}
           />
 
-          {sidebarOpen ? (
-            <RightSidebar
-              hoveringSchemaId={hoveringSchemaId}
-              onChangeHoveringSchemaId={onChangeHoveringSchemaId}
-              height={canvasRef.current ? canvasRef.current.clientHeight : 0}
-              size={size}
-              pageSize={pageSizes[pageCursor] ?? []}
-              activeElements={activeElements}
-              schemas={schemasList[pageCursor] ?? []}
-              changeSchemas={changeSchemas}
-              onSortEnd={onSortEnd}
-              onEdit={(id) => {
-                const editingElem = document.getElementById(id);
-                editingElem && onEdit([editingElem]);
-              }}
-              onEditEnd={onEditEnd}
-              deselectSchema={onEditEnd}
-              sidebarOpen={sidebarOpen}
-              setSidebarOpen={setSidebarOpen}
-              basePdf={template.basePdf}
-              scale={scale}
-            />
-          ) : (
-            <div className="relative">
-              <button className="absolute bg-red-400">Open Sidebar</button>
-            </div>
-          )}
+          <RightSidebar
+            hoveringSchemaId={hoveringSchemaId}
+            onChangeHoveringSchemaId={onChangeHoveringSchemaId}
+            height={canvasRef.current ? canvasRef.current.clientHeight : 0}
+            size={size}
+            pageSize={pageSizes[pageCursor] ?? []}
+            activeElements={activeElements}
+            schemas={schemasList[pageCursor] ?? []}
+            changeSchemas={changeSchemas}
+            onSortEnd={onSortEnd}
+            onEdit={(id) => {
+              const editingElem = document.getElementById(id);
+              editingElem && onEdit([editingElem]);
+            }}
+            onEditEnd={onEditEnd}
+            deselectSchema={onEditEnd}
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+            basePdf={template.basePdf}
+            scale={scale}
+            removeSchemas={removeSchemas}
+          />
         </DndContext>
       </Root>
     </main>

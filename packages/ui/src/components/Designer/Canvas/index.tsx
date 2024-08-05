@@ -117,6 +117,8 @@ interface Props {
   removeSchemas: (ids: string[]) => void;
   paperRefs: MutableRefObject<HTMLDivElement[]>;
   sidebarOpen: boolean;
+  editing: boolean;
+  setEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Canvas = (props: Props, ref: Ref<HTMLDivElement>) => {
@@ -136,6 +138,8 @@ const Canvas = (props: Props, ref: Ref<HTMLDivElement>) => {
     onChangeHoveringSchemaId,
     paperRefs,
     sidebarOpen,
+    editing,
+    setEditing,
   } = props;
   const { token } = theme.useToken();
   const pluginsRegistry = useContext(PluginsRegistry);
@@ -144,7 +148,6 @@ const Canvas = (props: Props, ref: Ref<HTMLDivElement>) => {
   const moveable = useRef<any>(null);
 
   const [isPressShiftKey, setIsPressShiftKey] = useState(false);
-  const [editing, setEditing] = useState(false);
 
   const prevSchemas = usePrevious(schemasList[pageCursor]);
 

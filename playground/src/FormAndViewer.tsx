@@ -1,14 +1,7 @@
 import { useRef, useState } from "react";
 import { Template, checkTemplate, getInputFromTemplate } from "@pdfme/common";
 import { Form, Viewer } from "@pdfme/ui";
-import {
-  getFontsData,
-  getTemplateByPreset,
-  handleLoadTemplate,
-  generatePDF,
-  getPlugins,
-  isJsonString,
-} from "./helper";
+import { getFontsData, getTemplateByPreset, getPlugins, isJsonString } from './helper';
 
 const headerHeight = 71;
 
@@ -46,27 +39,27 @@ function App() {
     const template = initTemplate();
     let inputs = getInputFromTemplate(template);
     try {
-      const inputsString = localStorage.getItem("inputs");
+      const inputsString = localStorage.getItem('inputs');
       if (inputsString) {
         const inputsJson = JSON.parse(inputsString);
         inputs = inputsJson;
       }
     } catch {
-      localStorage.removeItem("inputs");
+      localStorage.removeItem('inputs');
     }
 
     getFontsData().then((font) => {
       if (uiRef.current) {
-        ui.current = new (mode === "form" ? Form : Viewer)({
+        ui.current = new (mode === 'form' ? Form : Viewer)({
           domContainer: uiRef.current,
           template,
           inputs,
           options: {
             font,
-            labels: { 'clear': '消去' },
+            labels: { clear: '消去' },
             theme: {
               token: {
-                colorPrimary: '#25c2a0',
+                colorPrimary: '#6B52AD',
               },
             },
           },
@@ -79,7 +72,7 @@ function App() {
   const onChangeMode = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value as Mode;
     setMode(value);
-    localStorage.setItem("mode", value);
+    localStorage.setItem('mode', value);
     buildUi(value);
   };
 
@@ -87,14 +80,14 @@ function App() {
     if (ui.current) {
       const inputs = ui.current.getInputs();
       alert(JSON.stringify(inputs, null, 2));
-      alert("Dumped as console.log");
+      alert('Dumped as console.log');
       console.log(inputs);
     }
   };
 
   const onSetInputs = () => {
     if (ui.current) {
-      const prompt = window.prompt("Enter Inputs JSONString") || "";
+      const prompt = window.prompt('Enter Inputs JSONString') || '';
       try {
         const json = isJsonString(prompt) ? JSON.parse(prompt) : [{}];
         ui.current.setInputs(json);
@@ -107,13 +100,13 @@ function App() {
   const onSaveInputs = () => {
     if (ui.current) {
       const inputs = ui.current.getInputs();
-      localStorage.setItem("inputs", JSON.stringify(inputs));
-      alert("Saved!");
+      localStorage.setItem('inputs', JSON.stringify(inputs));
+      alert('Saved!');
     }
   };
 
   const onResetInputs = () => {
-    localStorage.removeItem("inputs");
+    localStorage.removeItem('inputs');
     if (ui.current) {
       const template = initTemplate();
       ui.current.setInputs(getInputFromTemplate(template));
@@ -130,7 +123,7 @@ function App() {
 
   return (
     <div>
-      <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: '0 1rem', fontSize: 'small' }}>
+      {/* <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: '0 1rem', fontSize: 'small' }}>
         <strong>Form, Viewer</strong>
         <span style={{ margin: "0 1rem" }}>:</span>
         <div>
@@ -153,7 +146,7 @@ function App() {
         <button onClick={onResetInputs}>Reset Inputs</button>
         <span style={{ margin: "0 1rem" }}>/</span>
         <button onClick={() => generatePDF(ui.current)}>Generate PDF</button>
-      </header>
+      </header> */}
       <div ref={uiRef} style={{ width: '100%', height: `calc(100vh - ${headerHeight}px)` }} />
     </div>
   );

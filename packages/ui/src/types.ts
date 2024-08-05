@@ -17,4 +17,5 @@ export type SidebarProps = {
   setSidebarOpen: (sidebarOpen: boolean) => void;
   basePdf: BasePdf;
   scale: number;
+  removeSchemas: (ids: string[]) => void;
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { DraggableSyntheticListeners } from '@dnd-kit/core';
 import { I18nContext } from '../../../../contexts';
-import { HolderOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { HolderOutlined, ExclamationCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button, Typography } from 'antd';
 
 const { Text } = Typography;
@@ -40,6 +40,7 @@ const Item = React.memo(
         sorting,
         transition,
         transform,
+        // removeSchemasFunction,
         ...props
       },
       ref
@@ -112,6 +113,12 @@ const Item = React.memo(
                 </span>
               )}
             </Text>
+
+            {/* <button
+            //  onClick={() => removeSchemas([value.toString()])}
+            >
+              <DeleteOutlined />
+            </button> */}
           </div>
         </li>
       );
