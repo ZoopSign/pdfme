@@ -1,5 +1,5 @@
 {
-  "name": "@pdfme/schemas",
+  "name": "@ZoopSign/schemas",
   "version": "0.0.0",
   "sideEffects": false,
   "author": "hand-dot",
@@ -78,6 +78,7 @@
     ]
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com/@ZoopSign",
+    "access": "private"
   }
 }
